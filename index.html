@@ -1,0 +1,158 @@
+<html>
+  <head>
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      legend {
+        background-color: #000;
+        color: #fff;
+        padding: 3px 6px;
+      }
+
+      input {
+        margin: .4rem;
+      }
+
+      #correct {
+        display: none;
+        color: green;
+      }
+
+      #wrong {
+        display: none;
+        color: red;
+      }
+
+      #scale {
+        margin-bottom: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h3 id="correct">Correct!</h3>
+      <h3 id="wrong">Wrong!</h3>
+      <h1 id="chord">V7</h1>
+      <form>
+        <fieldset id="scale">
+          <legend>Scale</legend>
+          <input type="radio" id="major" name="scale" />
+          <label for="major">Major</label>
+          <br />
+          <input type="radio" id="naturalMinor" name="scale" />
+          <label for="naturalMinor">Natural Minor</label>
+          <br />
+          <input type="radio" id="harmonicMinor" name="scale" />
+          <label for="harmonicMinor">Harmonic Minor</label>
+          <br />
+          <input type="radio" id="melodicMinor" name="scale" />
+          <label for="melodicMinor">Melodic Minor</label>
+        </fieldset>
+        <fieldset id="function">
+          <legend>Function</legend>
+          <input type="radio" id="T" name="function" />
+          <label for="T">T</label>
+          <br />
+          <input type="radio" id="SD" name="function" />
+          <label for="SD">SD</label>
+          <br />
+          <input type="radio" id="SDM" name="function" />
+          <label for="SDM">SDM</label>
+          <br />
+          <input type="radio" id="D" name="function" />
+          <label for="D">D</label>
+        </fieldset>
+      </form>
+      <button onclick="submit()">Submit</button>
+      <button onclick="next()">Next</button>
+    </div>
+    <script>
+      // Data
+      const scale = {
+        major: "major",
+        naturalMinor: "naturalMinor",
+        harmonicMinor: "harmonicMinor",
+        melodicMinor: "melodicMinor"
+      };
+      const scaleDisplay = {
+        [scale.major]: "Major",
+        [scale.naturalMinor]: "Natural Minor",
+        [scale.harmonicMinor]: "Harmonic Minor",
+        [scale.melodicMinor]: "Melodic Minor"
+      };
+      const chords = {
+        [scale.major]: ["Imaj7", "IIm7", "IIIm7", "IVmaj7", "V7", "VIm7", "VIIm7b5"],
+        [scale.naturalMinor]: ["Im7", "IIm7b5", "bIIImaj7", "IVm7", "Vm7", "bVImaj7", "bVII7"],
+        [scale.harmonicMinor]: ["V7b9b13", "VIIo7"],
+        [scale.melodicMinor]: ["IminMaj7", "bIIImaj7#5", "IV7", "V9b13", "VIm7b5"]
+      };
+      const chordFunctions = {
+        [scale.major]: ["T", "SD", "T", "SD", "D", "T", "D"],
+        [scale.naturalMinor]: ["T", "SDM", "T", "SDM", "D", "SDM", "SDM"],
+        [scale.harmonicMinor]: ["D", "D"],
+        [scale.melodicMinor]: ["T", "T", "SD", "D", "T"]
+      };
+
+      // Helper functions
+      const getRandomIndex = (max) => {
+        return Math.floor(Math.random() * max);
+      };
+      const getRandomScale = () => {
+        const scales = Object.keys(scale);
+        const randomIndex = getRandomIndex(scales.length);
+        return scales[randomIndex];
+      };
+      const setMessage = (type) => {
+        const correctElement = document.getElementById("correct");
+        const wrongElement = document.getElementById("wrong");
+
+        switch (type) {
+          case "correct":
+            correctElement.style.display = "block";
+            wrongElement.style.display = "none";
+            break;
+          case "wrong":
+            correctElement.style.display = "none";
+            wrongElement.style.display = "block";
+            break;
+          case "none":
+          default:
+            correctElement.style.display = "none";
+            wrongElement.style.display = "none";
+        }
+      }
+
+      // Global variables
+      let correctScale = null;
+      let correctChordFunction = null;
+
+      // onclick handlers
+      const next = () => {
+        correctScale = getRandomScale();
+        const randomIndex = getRandomIndex(chords[correctScale].length);
+
+        const chord = chords[correctScale][randomIndex];
+        correctChordFunction = chordFunctions[correctScale][randomIndex];
+
+        setMessage("none");
+        document.getElementById("chord").innerHTML = chord;
+      };
+      const submit = () => {
+        const selectedScale = document.querySelector('input[name="scale"]:checked').id;
+        const selectedChordFunction = document.querySelector('input[name="function"]:checked').id;
+
+        if (selectedScale === correctScale && selectedChordFunction === correctChordFunction) {
+          setMessage("correct");
+        } else {
+          setMessage("wrong");
+        }
+      };
+
+      next();
+    </script>
+  </body>
+</html>
