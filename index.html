@@ -67,7 +67,7 @@
           <label for="D">D</label>
         </fieldset>
       </form>
-      <button onclick="submit()">Submit</button>
+      <button id="submit" onclick="submit()">Submit</button>
       <button onclick="next()">Next</button>
     </div>
     <script>
@@ -124,7 +124,13 @@
             correctElement.style.display = "none";
             wrongElement.style.display = "none";
         }
-      }
+      };
+      const getCheckedRadioButton = (type) => {
+        return document.querySelector(`input[name=${type}]:checked`);
+      };
+      const getButtonElement = (type) => {
+        return document.getElementById(type);
+      };
 
       // Global variables
       let correctScale = null;
@@ -140,13 +146,17 @@
 
         setMessage("none");
         document.getElementById("chord").innerHTML = chord;
+        getCheckedRadioButton("scale").checked = false;
+        getCheckedRadioButton("function").checked = false;
+        getButtonElement("submit").disabled = false;
       };
       const submit = () => {
-        const selectedScale = document.querySelector('input[name="scale"]:checked').id;
-        const selectedChordFunction = document.querySelector('input[name="function"]:checked').id;
+        const selectedScale = getCheckedRadioButton("scale");
+        const selectedChordFunction = getCheckedRadioButton("function");
 
-        if (selectedScale === correctScale && selectedChordFunction === correctChordFunction) {
+        if (selectedScale.id === correctScale && selectedChordFunction.id === correctChordFunction) {
           setMessage("correct");
+          getButtonElement("submit").disabled = true;
         } else {
           setMessage("wrong");
         }
